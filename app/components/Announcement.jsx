@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const ANNOUNCEMENT_KEY = 'hasClosedAnnouncement_v3';
+const ANNOUNCEMENT_KEY = 'hasClosedAnnouncement_v20';
 
 export default function Announcement() {
   const [isVisible, setIsVisible] = useState(false);
@@ -16,6 +16,16 @@ export default function Announcement() {
   }, []);
 
   const handleClose = () => {
+    // 清理历史 ANNOUNCEMENT_KEY
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('hasClosedAnnouncement_v') && key !== ANNOUNCEMENT_KEY) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach((k) => localStorage.removeItem(k));
+
     localStorage.setItem(ANNOUNCEMENT_KEY, 'true');
     setIsVisible(false);
   };
@@ -52,6 +62,8 @@ export default function Announcement() {
               display: 'flex',
               flexDirection: 'column',
               gap: '16px',
+              maxHeight: 'calc(100dvh - 40px)',
+              overflow: 'hidden',
             }}
           >
             <div className="title" style={{ display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 700, fontSize: '18px', color: 'var(--accent)' }}>
@@ -62,19 +74,21 @@ export default function Announcement() {
               </svg>
               <span>公告</span>
             </div>
-            
-            <div style={{ color: 'var(--text)', lineHeight: '1.6', fontSize: '15px' }}>
-              感谢大家反馈的需求，现已增加如下功能：
-              <p>1. 基金目录分组。</p>
-              关于大家反馈比较多的以下功能会在下一个版本上线：
-              <p>1. 当日实际涨跌幅。</p>
-              <p>2. 持仓金额计算。</p>
-              每一个功能的加入都会去精细设计它的UI和交互，以符合项目整体的简约风格，所以请大家敬请期待。
+            <div style={{ color: 'var(--text)', lineHeight: '1.6', fontSize: '15px', overflowY: 'auto', minHeight: 0, flex: 1, paddingRight: '4px' }}>
+              <p>v0.2.9 更新内容：</p>
+              <p>1. 排序新增按昨日涨幅排序。</p>
+              <p>2. 排序个性化设置支持切换排序形式。</p>
+              <p>3. 全局设置新增显示/隐藏大盘指数。</p>
+              <p>4. 新增持有天数。</p>
+              <p>5. 登录方式支持 Github。</p>
+              <br/>
+              关联板块实时估值还在测试，会在近期上线。
+              <p>如有建议和问题，欢迎进用户支持群反馈。</p>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
-              <button 
-                className="button" 
+              <button
+                className="button"
                 onClick={handleClose}
                 style={{ width: '100%', justifyContent: 'center', display: 'flex', alignItems: 'center' }}
               >

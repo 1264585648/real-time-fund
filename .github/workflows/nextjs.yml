@@ -76,6 +76,9 @@ jobs:
           cat << 'EOF' > .env.local
           NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY=${{ secrets.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY }}
+          NEXT_PUBLIC_GA_ID=${{ secrets.NEXT_PUBLIC_GA_ID }}
+          NEXT_PUBLIC_GITHUB_LATEST_RELEASE_URL=${{ secrets.NEXT_PUBLIC_GITHUB_LATEST_RELEASE_URL }}
           EOF
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}

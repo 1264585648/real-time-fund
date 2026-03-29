@@ -1,39 +1,55 @@
-'use client';
-
 import { createClient } from '@supabase/supabase-js';
 
-// Supabase 配置
-// 这些值需要从 Supabase 项目设置中获取
-// 为了安全，建议使用环境变量
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Supabase 配置缺失，请设置 NEXT_PUBLIC_SUPABASE_URL 和 NEXT_PUBLIC_SUPABASE_ANON_KEY 环境变量');
-}
+const createNoopChannel = () => {
+    const channel = {
+        on: () => channel,
+        subscribe: () => channel
+    };
+    return channel;
+};
 
-// 创建 Supabase 客户端
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-  },
+const createNoopTable = () => {
+    return {
+        select: () => ({
+            eq: () => ({
+                maybeSingle: async () => ({ data: null, error: { message: 'Supabase not configured' } })
+            })
+        }),
+        insert: async () => ({ data: null, error: { message: 'Supabase not configured' } }),
+        upsert: () => ({
+            select: async () => ({ data: null, error: { message: 'Supabase not configured' } })
+        })
+    };
+};
+
+const createNoopSupabase = () => ({
+    auth: {
+        getSession: async () => ({ data: { session: null }, error: null }),
+        onAuthStateChange: () => ({
+            data: { subscription: { unsubscribe: () => { } } }
+        }),
+        signInWithOtp: async () => ({ data: null, error: { message: 'Supabase not configured' } }),
+        signInWithOAuth: async () => ({ data: null, error: { message: 'Supabase not configured' } }),
+        verifyOtp: async () => ({ data: null, error: { message: 'Supabase not configured' } }),
+        signOut: async () => ({ error: null })
+    },
+    from: () => createNoopTable(),
+    channel: () => createNoopChannel(),
+    removeChannel: () => { },
+    rpc: async () => ({ data: null, error: { message: 'Supabase not configured' } })
 });
 
-// 数据库表结构定义（用于类型提示）
-export const TABLES = {
-  USER_DATA: 'user_data',
-};
-
-// 用户数据结构
-export const DATA_KEYS = {
-  FUNDS: 'funds',
-  POSITIONS: 'positions',
-  FAVORITES: 'favorites',
-  GROUPS: 'groups',
-  COLLAPSED_CODES: 'collapsedCodes',
-  REFRESH_MS: 'refreshMs',
-  VIEW_MODE: 'viewMode',
-};
-
+export const supabase = isSupabaseConfigured ? createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+        // 启用自动刷新 token
+        autoRefreshToken: true,
+        // 持久化 session 到 localStorage
+        persistSession: true,
+        // 检测 URL 中的 session（用于邮箱验证回调）
+        detectSessionInUrl: true
+    }
+}) : createNoopSupabase();

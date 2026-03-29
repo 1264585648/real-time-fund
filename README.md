@@ -1,23 +1,38 @@
-## 实时基金估值 | 基金实时净值查询与重仓追踪工具 (Real-time Fund Valuation)
+# 实时基金估值 (Real-time Fund Valuation)
 
-一个基于 Next.js 开发的 **纯前端基金实时估值工具**，支持 **基金实时净值查询、基金盘中估值监控、自选基金管理、基金重仓股实时行情追踪**。
+一个基于 Next.js 开发的基金估值与重仓股实时追踪工具。采用玻璃拟态设计（Glassmorphism），支持移动端适配。
+预览地址：  
+1. [https://hzm0321.github.io/real-time-fund/](https://hzm0321.github.io/real-time-fund/)
+2. [https://fund.cc.cd/](https://fund.cc.cd/) （加速国内访问）
 
-采用玻璃拟态设计（Glassmorphism），移动端友好，无需后端服务器即可运行，适合作为 **基金投资者个人基金看板 / 自用基金估值面板**。
+## Star History
 
-预览地址：[https://lianggame.github.io/real-time-fund/](https://lianggame.github.io/real-time-fund/)
-
-![预览截图](./docs/website.png)
+<a href="https://www.star-history.com/?repos=hzm0321%2Freal-time-fund&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/image?repos=hzm0321/real-time-fund&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/image?repos=hzm0321/real-time-fund&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/image?repos=hzm0321/real-time-fund&type=date&legend=top-left" />
+ </picture>
+</a>
 
 ## ✨ 特性
 
-- **基金实时估值 / 净值查询**：通过输入 6 位基金代码，实时获取并展示基金单位净值、估值净值、实时涨跌幅，适合做 **基金盘中估值监控面板**。
-- **基金重仓股与持仓追踪**：自动获取基金前 10 大重仓股票，并实时追踪重仓股盘中行情，支持展开 / 收起查看 **基金持仓结构**。
-- **纯前端基金工具**：采用 JSONP 方案直连 **天天基金、东方财富、腾讯财经** 等公开接口，彻底解决跨域问题，支持在 GitHub Pages 等静态环境直接部署。
-- **自选基金与组合管理**：支持添加自选基金、分组管理，自定义基金组合视图，适合作为个人 **基金组合管理 / 自选基金看板**。
-- **本地持久化 + 多设备同步**：使用 `localStorage` 本地保存基金列表、持仓与配置，可选开启 Supabase 云同步，实现多设备间的基金持仓同步。
-- **响应式设计**：完美适配 PC 与移动端，支持手机端随时查看 **基金实时净值** 与重仓股行情。
-- **可自定义刷新频率**：支持设置自动刷新间隔（5秒 - 300秒），并提供手动刷新按钮，适合盯盘场景。
-
+- **实时估值**：通过输入基金编号，实时获取并展示基金的单位净值、估值净值及实时涨跌幅。
+- **重仓追踪**：自动获取基金前 10 大重仓股票，并实时追踪重仓股的盘中涨跌情况。支持收起/展开展示。
+- **纯前端运行**：采用 JSONP 方案直连东方财富、腾讯财经等公开接口，彻底解决跨域问题，支持在 GitHub Pages 等静态环境直接部署。
+- **本地持久化**：使用 `localStorage` 存储已添加的基金列表、持仓、交易记录、定投计划及配置信息，刷新不丢失。
+- **响应式设计**：完美适配 PC 与移动端。针对移动端优化了文字展示、间距及交互体验。
+- **自选功能**：支持将基金添加至"自选"列表，通过 Tab 切换展示全部基金或仅自选基金。自选状态支持持久化及同步清理。
+- **分组管理**：支持创建多个基金分组，方便按用途或类别管理基金。
+- **持仓管理**：记录每只基金的持有份额和成本价，自动计算持仓收益和累计收益。
+- **交易记录**：支持买入/卖出操作，记录交易历史，支持查看单个基金的交易明细。
+- **定投计划**：支持设置自动定投计划，可按日/周/月等周期自动生成买入交易。
+- **云端同步**：通过 Supabase 云端备份数据，支持多设备间数据同步与冲突处理。
+- **自定义排序**：支持多种排序规则（估值涨跌幅、持仓收益、持有金额等），可自由组合和启用/禁用规则。
+- **拖拽排序**：在默认排序模式下可通过拖拽调整基金顺序。
+- **明暗主题**：支持亮色/暗色主题切换，一键换肤。
+- **导入/导出**：支持将配置导出为 JSON 文件备份，或从文件导入恢复。
+- **可自定义频率**：支持设置自动刷新间隔（5秒 - 300秒），并提供手动刷新按钮。
 
 ## 🛠 技术栈
 
@@ -35,7 +50,7 @@
 
 1. 克隆仓库：
    ```bash
-   git clone https://github.com/LiangGame/real-time-fund.git
+   git clone https://github.com/hzm0321/real-time-fund.git
    cd real-time-fund
    ```
 
@@ -44,10 +59,18 @@
    npm install
    ```
 
-3. （可选）配置多设备同步：
-   - 如需使用多设备同步功能，请参考 [Supabase 设置指南](./SUPABASE_SETUP.md)
-   - 复制 `env.example` 为 `.env.local` 并填入 Supabase 配置
-   - 在 Supabase Dashboard 执行 `supabase-migration.sql` 创建数据库表
+3. 配置环境变量：
+   ```bash
+   cp env.example .env.local
+   ```
+   按照 `env.example` 填入以下值：
+  - `NEXT_PUBLIC_Supabase_URL`：Supabase 项目 URL
+  - `NEXT_PUBLIC_Supabase_ANON_KEY`：Supabase 匿名公钥
+  - `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY`：Web3Forms Access Key
+  - `NEXT_PUBLIC_GA_ID`：Google Analytics Measurement ID（如 `G-xxxx`）
+  - `NEXT_PUBLIC_GITHUB_LATEST_RELEASE_URL`：GitHub 最新 Release 接口地址，用于在页面中展示“发现新版本”提示（如：`https://api.github.com/repos/hzm0321/real-time-fund/releases/latest`）
+
+注：如不使用登录、反馈或 GA 统计功能，可不设置对应变量
 
 4. 运行开发服务器：
    ```bash
@@ -55,9 +78,85 @@
    ```
    访问 [http://localhost:3000](http://localhost:3000) 查看效果。
 
+### Supabase 配置说明
+1. NEXT_PUBLIC_Supabase_URL 和 NEXT_PUBLIC_Supabase_ANON_KEY 获取
+
+   NEXT_PUBLIC_Supabase_URL：Supabase控制台 → Project Settings → General → Project ID  
+   NEXT_PUBLIC_Supabase_ANON_KEY： Supabase控制台 → Project Settings → API Keys → Publishable key
+
+   示例：
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=https://abcdefghijklmnop.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=xxxxxx
+   ```
+
+2. 邮件数量修改
+
+    Supabase 免费项目自带每小时2条邮件服务。如果觉得额度不够，可以改成自己的邮箱SMTP。修改路径在 Supabase控制台 → Authentication → Email → SMTP Settings。  
+    之后可在 Rate Limits ，自由修改每小时邮件数量。
+
+3. 修改接收到的邮件为验证码  
+
+    在 Supabase控制台 → Authentication → Email Templates 中，选择 **Magic Link** 模板进行编辑，在邮件正文中使用变量 `{{ .Token }}` 展示验证码。  
+
+4. 修改验证码位数  
+
+    官方验证码位数默认为8位，可自行修改。常见一般为6位。
+   在 Supabase控制台 → Authentication → Sign In / Providers → Auth Providers → email → Minimum password length  和 Email OTP Length 都改为6位。
+
+5. 关闭确认邮件
+
+    在 Supabase控制台 → Authentication → Sign In / Providers → Auth Providers → email 中，关闭 **Confirm email** 选项。这样用户注册后就不需要再去邮箱点击确认链接了，直接使用验证码登录即可。
+
+6. 配置 GitHub 登录（可选）
+
+   如需支持 GitHub OAuth 登录，需完成以下配置：
+
+   **第一步：在 GitHub 创建 OAuth App**
+   - 访问 GitHub → Settings → Developer settings → OAuth Apps → New OAuth App
+   - 填写信息：
+     - Application name：自定义应用名称
+     - Homepage URL：你的应用地址（如 `https://hzm0321.github.io/real-time-fund/`）
+     - Authorization callback URL：`https://<your-supabase-project-id>.supabase.co/auth/v1/callback`
+   - 创建后获取 **Client ID** 和 **Client Secret**
+
+   **第二步：在 Supabase 启用 GitHub Provider**
+   - Supabase控制台 → Authentication → Sign In / Providers → Auth Providers → GitHub
+   - 开启 **GitHub** 开关
+   - 填入 GitHub OAuth App 的 **Client ID** 和 **Client Secret**
+   - 点击 **Save** 保存
+
+   **第三步：配置站点 URL（重要）**
+   - Supabase控制台 → Authentication → URL Configuration
+   - **Site URL**：设置为你的应用主域名（如 `https://hzm0321.github.io/`）
+   - **Redirect URLs**：添加你的应用完整路径（如 `https://hzm0321.github.io/real-time-fund/`）
+
+   配置完成后，用户即可通过 GitHub 账号一键登录。
+
+7. 执行数据库初始化 SQL
+
+   项目需要创建 `user_configs` 表及相关策略才能使用云端同步功能。SQL 语句位于项目 `/doc/supabase.sql` 文件。
+
+   **执行步骤：**
+   - Supabase控制台 → SQL Editor → New query
+   - 复制 `/doc/supabase.sql` 文件中的全部内容，粘贴到编辑器
+   - 点击 **Run** 执行
+
+   SQL 脚本将完成以下操作：
+   - 创建 `user_configs` 表（存储用户配置数据）
+   - 启用行级安全（RLS），确保用户只能访问自己的数据
+   - 创建 SELECT / INSERT / UPDATE 策略
+   - 创建 `update_user_config_partial` 函数（用于增量更新配置）
+
+   执行成功后，可在 Table Editor 中看到 `user_configs` 表。
+
+更多 Supabase 相关内容查阅官方文档。
+
 ### 构建与部署
 
 本项目已配置 GitHub Actions。每次推送到 `main` 分支时，会自动执行构建并部署到 GitHub Pages。
+如需使用 GitHub Actions 部署，请在 GitHub 项目 Settings → Secrets and variables → Actions 中创建对应的 Repository secrets（字段名称与 `.env.local` 保持一致）。
+包括：`NEXT_PUBLIC_Supabase_URL`、`NEXT_PUBLIC_Supabase_ANON_KEY`、`NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY`、`NEXT_PUBLIC_GA_ID`、`NEXT_PUBLIC_GITHUB_LATEST_RELEASE_URL`。
 
 若要手动构建：
 ```bash
@@ -65,16 +164,72 @@ npm run build
 ```
 静态文件将生成在 `out` 目录下。
 
+### Docker运行
+
+镜像支持两种配置方式：
+
+- **构建时写入**：构建时通过 `--build-arg` 或 `.env` 传入 `NEXT_PUBLIC_*`，值会打进镜像，运行时无需再传。
+- **运行时替换**：构建时不传（或使用默认占位符），启动容器时通过 `-e` 或 `--env-file` 传入，入口脚本会在启动 Nginx 前替换静态资源中的占位符。
+
+可复制 `env.example` 为 `.env` 并填入实际值；若不用登录/反馈功能可留空。
+
+1. 构建镜像
+```bash
+# 方式 A：运行时再注入配置（镜像内为占位符）
+docker build -t real-time-fund .
+
+# 方式 B：构建时写入配置
+docker build -t real-time-fund --build-arg NEXT_PUBLIC_SUPABASE_URL=xxx --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=xxx .
+# 或依赖同目录 .env：docker compose build
+```
+
+2. 启动容器
+```bash
+# 若构建时未写入配置，可在此注入（与 --env-file .env 二选一）
+docker run -d -p 3000:3000 --name fund --env-file .env real-time-fund
+```
+
+#### docker-compose（会读取同目录 `.env` 作为 build-arg 与运行环境）
+```bash
+# 建议先：cp env.example .env 并编辑 .env
+docker compose up -d
+```
+
+### Docker Hub
+
+镜像已发布至 Docker Hub，可直接拉取运行，无需本地构建。
+
+1. **拉取镜像**
+   ```bash
+   docker pull hzm0321/real-time-fund:latest
+   ```
+
+2. **启动容器**  
+   访问 [http://localhost:3000](http://localhost:3000) 即可使用。
+   ```bash
+   docker run -d -p 3000:3000 --name real-time-fund --restart always hzm0321/real-time-fund:latest
+   ```
+
+3. **使用自定义环境变量（运行时替换）**  
+   镜像内已预置占位符，启动时通过环境变量即可覆盖，无需重新构建。例如使用本地 `.env`：
+   ```bash
+   docker run -d -p 3000:3000 --name real-time-fund --restart always --env-file .env hzm0321/real-time-fund:latest
+   ```
+   或单独指定变量：`-e NEXT_PUBLIC_SUPABASE_URL=xxx -e NEXT_PUBLIC_SUPABASE_ANON_KEY=xxx`。  
+   变量名与本地开发一致：`NEXT_PUBLIC_SUPABASE_URL`、`NEXT_PUBLIC_SUPABASE_ANON_KEY`、`NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY`、`NEXT_PUBLIC_GA_ID`、`NEXT_PUBLIC_GITHUB_LATEST_RELEASE_URL`。
+
 ## 📖 使用说明
 
-1. **添加基金**：在顶部输入框输入 6 位基金代码（如 `110022`），点击"添加"。
+1. **添加基金**：在顶部输入框输入 6 位基金代码（如 `110022`），点击“添加”。
 2. **查看详情**：卡片将展示实时估值及前 10 重仓股的占比与今日涨跌。
-3. **调整频率**：点击右上角"设置"图标，可调整自动刷新的间隔时间。
+3. **调整频率**：点击右上角“设置”图标，可调整自动刷新的间隔时间。
 4. **删除基金**：点击卡片右上角的红色删除图标即可移除。
-5. **多设备同步**（可选）：
-   - 点击导航栏右侧的同步状态区域
-   - 注册/登录账号后，数据会自动同步到云端
-   - 在其他设备登录同一账号即可自动同步数据
+
+## 💬 开发者交流群
+
+欢迎基金实时开发者加入微信群聊讨论开发与协作：
+
+<img src="./doc/weChatGroupDevelop.jpg" width="300">
 
 ## 📝 免责声明
 
@@ -88,14 +243,8 @@ npm run build
 - **要求**：基于本项目衍生或修改的作品需以相同协议开源，并保留版权声明与协议全文。
 - **无担保**：软件按「原样」提供，不提供任何明示或暗示的担保。
 
-完整协议文本见仓库根目录 [LICENSE](./LICENSE) 文件，或 [GNU AGPL v3 官方说明](https://www.gnu.org/licenses/agpl-3.0.html)。
-
-## 🔍 关键词 / Tags
-
-基金实时估值、基金估值查询、基金净值估算、基金实时净值查询、基金盘中估值、指数基金实时估值、ETF 实时估值、场内基金估值、场外基金估值、
-自选基金管理、基金组合管理、基金持仓查询、基金重仓股实时行情、个人基金看板、基金估值开源项目、纯前端基金工具、天天基金实时估值、东方财富重仓股。
+完整协议文本见仓库根目录 [LICENSE](./LICENSE) 文件，或 [GNU AGPL v3 官方说明](https://www.gnu.org/licenses/agpl-3.0.html)。  
 
 ---
-Made by [LiangGame](https://github.com/LiangGame/real-time-fund)
-
-本项目在 [hzm0321/real-time-fund](https://github.com/hzm0321/real-time-fund) 的基础上进行了二次开发与功能扩展，感谢原作者的开源贡献。
+二开或转载需注明出处。  
+Made by [hzm](https://github.com/hzm0321)
