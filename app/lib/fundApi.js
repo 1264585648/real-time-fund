@@ -161,9 +161,18 @@ export const fetchFundData = async (code) => {
                 equityReturn: item.equityReturn,
               }));
 
-              const last = sliced[sliced.length - 2];
-              if (last && typeof last.equityReturn === 'number') {
-                yesterdayChange = last.equityReturn;
+              // 与 gz 接口「昨日净值」dwjz 对齐：应为走势里最近已公布净值日的日涨跌幅。
+              // 原先误用 length-2，会少算一天，与「昨日净值」不一致。
+              for (let i = sliced.length - 1; i >= 0; i--) {
+                const p = sliced[i];
+                if (
+                  p &&
+                  typeof p.equityReturn === 'number' &&
+                  Number.isFinite(p.equityReturn)
+                ) {
+                  yesterdayChange = p.equityReturn;
+                  break;
+                }
               }
             }
           } catch (e) {
