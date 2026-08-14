@@ -20,6 +20,8 @@ export const useFunds = () => {
   const [refreshMs, setRefreshMs] = useState(30000);
   const [refreshing, setRefreshing] = useState(false);
   const [positions, setPositions] = useState({});
+  // 首次访问时从 initial-holdings.json 自动导入持仓（按金额计算份额）
+  const [pendingInitialHoldings, setPendingInitialHoldings] = useState(null);
 
   const timerRef = useRef(null);
   const refreshingRef = useRef(false);
@@ -81,10 +83,29 @@ export const useFunds = () => {
         // 从同步服务加载数据（会尝试从云端同步）
         const saved = await syncService.load(DATA_KEYS.FUNDS, []);
         if (Array.isArray(saved) && saved.length) {
+          // 有历史数据：正常加载
           const deduped = dedupeByCode(saved);
           setFunds(deduped);
           const codes = Array.from(new Set(deduped.map((f) => f.code)));
           if (codes.length) refreshAll(codes);
+        } else {
+          // 首次访问：尝试从 initial-holdings.json 导入初始持仓
+          try {
+            const res = await fetch('/initial-holdings.json');
+            if (res.ok) {
+              const initData = await res.json();
+              if (initData?.holdings?.length) {
+                setPendingInitialHoldings(initData.holdings);
+                const codes = initData.holdings.map((h) => h.code);
+                // 先用占位数据让 refreshAll 去拉取真实基金信息
+                const placeholderFunds = codes.map((c) => ({ code: c, name: '' }));
+                setFunds(placeholderFunds);
+                refreshAll(codes);
+              }
+            }
+          } catch (e) {
+            console.log('未找到初始持仓文件，以空白状态启动');
+          }
         }
         
         const savedMs = await syncService.load(DATA_KEYS.REFRESH_MS, 30000);
@@ -116,6 +137,35 @@ export const useFunds = () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [funds, refreshMs, refreshAll]);
+
+  // 首次导入：当 initial-holdings.json 中的基金全部拉取到实时净值后，
+  // 按"持有金额 ÷ 单位净值"自动计算份额并写入持仓
+  useEffect(() => {
+    if (!pendingInitialHoldings || !funds.length) return;
+    // 检查是否所有基金都已获取到有效净值（dwjz）
+    const allReady = pendingInitialHoldings.every((h) => {
+      const f = funds.find((item) => item.code === h.code);
+      return f && Number.isFinite(Number(f.dwjz)) && Number(f.dwjz) > 0;
+    });
+    if (!allReady) return; // 等待 refreshAll 全部完成
+    const newPositions = {};
+    for (const h of pendingInitialHoldings) {
+      const fund = funds.find((f) => f.code === h.code);
+      if (!fund || !Number.isFinite(Number(fund.dwjz)) || Number(fund.dwjz) <= 0) continue;
+      const nav = Number(fund.dwjz);
+      const shares = h.amount / nav;
+      newPositions[h.code] = {
+        shares,
+        costPrice: nav,
+        totalCost: h.amount,
+        lastTradeDate: null,
+        lastTradeNav: nav,
+      };
+    }
+    setPositions(newPositions);
+    syncService.save(DATA_KEYS.POSITIONS, newPositions);
+    setPendingInitialHoldings(null); // 仅执行一次
+  }, [funds, pendingInitialHoldings]);
 
   const manualRefresh = useCallback(async () => {
     if (refreshingRef.current) return;
