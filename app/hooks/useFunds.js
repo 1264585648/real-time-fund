@@ -91,7 +91,9 @@ export const useFunds = () => {
         } else {
           // 首次访问：尝试从 initial-holdings.json 导入初始持仓
           try {
-            const res = await fetch('/initial-holdings.json');
+            // 使用相对路径：生产环境部署在 /fund 子路径下，
+            // 绝对路径 /initial-holdings.json 会落到根站点到 404。
+            const res = await fetch('initial-holdings.json');
             if (res.ok) {
               const initData = await res.json();
               if (initData?.holdings?.length) {
@@ -154,10 +156,20 @@ export const useFunds = () => {
       if (!fund || !Number.isFinite(Number(fund.dwjz)) || Number(fund.dwjz) <= 0) continue;
       const nav = Number(fund.dwjz);
       const shares = h.amount / nav;
+      // 根据持有收益率反推成本价（如有），否则用当前净值作为成本
+      let totalCost, costPrice;
+      if (h.returnRate != null && h.returnRate !== 0 && h.returnRate !== -1) {
+        // 持有金额 = 成本 × (1 + 收益率) → 成本 = 金额 / (1 + 收益率)
+        totalCost = h.amount / (1 + h.returnRate);
+        costPrice = totalCost / shares;
+      } else {
+        totalCost = h.amount;
+        costPrice = nav;
+      }
       newPositions[h.code] = {
         shares,
-        costPrice: nav,
-        totalCost: h.amount,
+        costPrice,
+        totalCost,
         lastTradeDate: null,
         lastTradeNav: nav,
       };
